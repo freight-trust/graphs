@@ -1,73 +1,73 @@
 body {
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 300;
-    background-color: black;
-    color: #FFF;
+  font-family: "Source Sans Pro", sans-serif;
+  font-weight: 300;
+  background-color: black;
+  color: #fff;
 }
 
 b {
-    font-weight: 900;
+  font-weight: 900;
 }
 
 .mediumgraph {
-    width: 50%;
-    float:left;
+  width: 50%;
+  float: left;
 }
 
 .smallgraph {
-    width: 25%;
-    float:left;
+  width: 25%;
+  float: left;
 }
 
 .outline {
-    fill: none;
-    stroke: #888888;
-    stroke-width: 1px;
+  fill: none;
+  stroke: #888888;
+  stroke-width: 1px;
 }
 
 #tooltip {
-    font-size: 10pt;
-    font-weight: 900;
+  font-size: 10pt;
+  font-weight: 900;
 
-    fill: #000000;
-    stroke: #ffffff;
-    stroke-width: 0.25px;
+  fill: #000000;
+  stroke: #ffffff;
+  stroke-width: 0.25px;
 }
 
 .node {
-    stroke: #ffffff;
-    stroke-weight: 1px;
+  stroke: #ffffff;
+  stroke-weight: 1px;
 }
 
 .link {
-    fill: none;
-    stroke: #FF0000;
-    stroke-weight: 1px;
-    stroke-opacity: 0.5;
+  fill: none;
+  stroke: #ff0000;
+  stroke-weight: 1px;
+  stroke-opacity: 0.5;
 }
 
 .highlight {
-    stroke: red;
-    stroke-weight: 4px;
-    stroke-opacity: 1.0;
+  stroke: red;
+  stroke-weight: 4px;
+  stroke-opacity: 1;
 }
 
 .datadotsmall {
-    fill: red;
+  fill: red;
 }
 
 .datadotlarge {
-    fill: white;
-    opacity: 0.6;
+  fill: white;
+  opacity: 0.6;
 }
 
 .axis path,
 .axis line {
   fill: none;
-  stroke: #FFF;
+  stroke: #fff;
   shape-rendering: crispEdges;
 }
 
 svg text {
-    fill: #FFF;
+  fill: #fff;
 }
