@@ -1,0 +1,62 @@
+<!--
+ *    Copyright 2020 FreightTrust and Clearing Corporation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Freight Trust Network Staking Pool Simulator">
+
+<script src="d3.v3.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+<p>
+    <label for="stakingpoolSize">
+            Staking Pool Size (mm): <span id="stakingpoolSize-value">10</span>
+    </label>
+    <input type="range" min="1" max="20" id="stakingpoolSize">
+
+    <label for="simulationSpeed">
+            Simulation Speed (blocks): <span id="simulationSpeed-value">35</span>
+    </label>
+    <!-- 60 / 4 = 15, meaning 35 blocks, 1block = 15seconds , 60 seconds = 4 blocks    -->
+    <input type="range" min="1" max="100" id="simulationSpeed" value="15">
+
+    <label for="nbIterations">
+            Iterations : <span id="nbIterations-value">200</span>
+    </label>
+    <input type="range" min="100" max="5000" id="nbIterations" value="200">
+
+    <select onchange="changeCSS(this.value + '.css', 0)">
+        <option value="original">Original</option>
+        <option value="dark">Dark</option>
+    </select>
+</p>
+
+<div id="valueVsHonestyGraph" class="mediumgraph"></div>
+<div id="trustVsHonestyGraph" class="mediumgraph"></div>
+<div id="circulargraph"></div>
+</body>
+
+<script language="javascript" type="text/javascript" src="simulation.js"></script>
+<script language="javascript" type="text/javascript" src="livegraph.js"></script>
+<script language="javascript" type="text/javascript" src="circulargraph.js"></script>
+<script language="javascript" type="text/javascript" src="dashboard.js"></script>
+
+<link href="original.css" rel="stylesheet" type="text/css">
+
+</html>
