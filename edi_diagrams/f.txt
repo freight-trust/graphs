@@ -1,4 +1,0 @@
-X12.png
-X12_850.png
-ASC-X12.png
-EDIFACT.png
