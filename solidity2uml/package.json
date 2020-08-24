@@ -1,0 +1,56 @@
+{
+  "name": "tx2uml",
+  "version": "0.0.18",
+  "description": "Ethereum transaction visualizer that generates UML a sequence diagram from transaction contract calls.",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "scripts": {
+    "build": "tsc --build ./tsconfig.json",
+    "clean": "tsc --build --clean ./tsconfig.json",
+    "prettier:check": "prettier --check --no-semi '**/*.{ts,md}'",
+    "prettier:fix": "prettier --write --no-semi '**/*.{ts,md}'",
+    "test": "npx jest"
+  },
+  "author": "Nick Addison",
+  "repository": "github:naddison36/tx2uml",
+  "license": "MIT",
+  "files": [
+    "lib/*.js",
+    "lib/*.d.ts",
+    "lib/plantuml.jar"
+  ],
+  "bin": {
+    "tx2uml": "lib/tx2uml.js"
+  },
+  "keywords": [
+    "Unified Modeling Language",
+    "UML",
+    "Ethereum",
+    "Sequence diagram",
+    "Sequence",
+    "diagram",
+    "transaction",
+    "trace",
+    "debug",
+    "Blockchain",
+    "visual"
+  ],
+  "dependencies": {
+    "axios": "^0.19.2",
+    "axios-debug-log": "^0.6.2",
+    "bignumber.js": "^9.0.0",
+    "commander": "^4.1.1",
+    "debug": "^4.1.1",
+    "verror": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.3",
+    "@types/node": "^13.7.7",
+    "@types/verror": "^1.10.3",
+    "jest": "^25.1.0",
+    "prettier": "^1.19.1",
+    "ts-jest": "^25.2.1",
+    "ts-node": "^8.6.2",
+    "typescript": "^3.8.3"
+  }
+}
