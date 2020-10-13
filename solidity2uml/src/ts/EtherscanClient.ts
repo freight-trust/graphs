@@ -1,15 +1,15 @@
-import axios from "axios"
-import { VError } from "verror"
-import { Contract, Networks } from "./transaction"
+import axios from "axios";
+import { VError } from "verror";
+import { Contract, Networks } from "./transaction";
 
-const debug = require("debug")("tx2uml")
+const debug = require("debug")("tx2uml");
 
 const etherscanBaseUrls = {
   mainnet: "https://api.etherscan.io/api",
   ropsten: "https://api-ropsten.etherscan.io/api",
   rinkeby: "https://api-rinkeby.etherscan.io/api",
-  kovan: "https://api-kovan.etherscan.io/api"
-}
+  kovan: "https://api-kovan.etherscan.io/api",
+};
 
 export const getContract = async (
   contractAddress: string,
@@ -23,36 +23,36 @@ export const getContract = async (
         module: "contract",
         action: "getsourcecode",
         address: contractAddress,
-        apiKey: apiKey
-      }
-    })
+        apiKey: apiKey,
+      },
+    });
 
     if (!Array.isArray(response?.data?.result)) {
       throw new Error(
         `Failed Etherscan API with result "${response?.data?.result}"`
-      )
+      );
     }
 
     if (response.data.result[0].ABI === "Contract source code not verified") {
-      debug(`Contract ${contractAddress} is not verified on Etherscan`)
+      debug(`Contract ${contractAddress} is not verified on Etherscan`);
       return {
         address: contractAddress,
-        contractName: null
-      }
+        contractName: null,
+      };
     }
 
     debug(
       `Got contract name ${response.data.result[0].ContractName} for address ${contractAddress} from Etherscan`
-    )
+    );
 
     return {
       address: contractAddress,
-      contractName: response.data.result[0].ContractName
-    }
+      contractName: response.data.result[0].ContractName,
+    };
   } catch (err) {
     throw new VError(
       err,
       `Failed to get contract details for contract ${contractAddress} from Etherscan using url ${etherscanBaseUrls[network]}`
-    )
+    );
   }
-}
+};

@@ -5,17 +5,17 @@ import {
   getContractsFromAddresses,
   getTransaction,
   getTransactions,
-  TransactionInfo
-} from "./transaction"
-import { streamTransferPuml, streamTxPlantUml } from "./plantUmlStreamer"
-import { generateFile } from "./fileGenerator"
-import { transactionHash } from "./regEx"
-import { Readable } from "stream"
-import { getTransfers } from "./AlethioClient"
+  TransactionInfo,
+} from "./transaction";
+import { streamTransferPuml, streamTxPlantUml } from "./plantUmlStreamer";
+import { generateFile } from "./fileGenerator";
+import { transactionHash } from "./regEx";
+import { Readable } from "stream";
+import { getTransfers } from "./AlethioClient";
 
-const debugControl = require("debug")
-const debug = require("debug")("tx2uml")
-const program = require("commander")
+const debugControl = require("debug");
+const debug = require("debug")("tx2uml");
+const program = require("commander");
 
 program
   .arguments("<txHash>")
@@ -43,73 +43,78 @@ The transaction hashes have to be in hexadecimal format with a 0x prefix. If run
   .option("-e, --ether", "show ether value", false)
   .option("-t, --transfers", "only show ether and token transfers", false)
   .option("-v, --verbose", "run with debugging statements", false)
-  .parse(process.argv)
+  .parse(process.argv);
 
 if (program.verbose) {
-  debugControl.enable("tx2uml,axios")
-  debug(`Enabled tx2uml debug`)
+  debugControl.enable("tx2uml,axios");
+  debug(`Enabled tx2uml debug`);
 }
 
 const tx2uml = async () => {
   const options = {
     alethioApiKey: program.alethioApiKey,
-    network: program.network
-  }
+    network: program.network,
+  };
 
-  let pumlStream: Readable
+  let pumlStream: Readable;
   if (program.transfers) {
-    const txHash = program.args[0]
+    const txHash = program.args[0];
     const transfers = await getTransfers(
       txHash,
       options.alethioApiKey,
       options.network
-    )
+    );
     const participants: string[] = [
-      ...transfers.map(t => t.from),
-      ...transfers.map(t => t.to)
-    ]
-    const contracts = await getContractsFromAddresses(participants, options)
-    pumlStream = await streamTransferPuml(txHash, transfers, contracts, options)
+      ...transfers.map((t) => t.from),
+      ...transfers.map((t) => t.to),
+    ];
+    const contracts = await getContractsFromAddresses(participants, options);
+    pumlStream = await streamTransferPuml(
+      txHash,
+      transfers,
+      contracts,
+      options
+    );
   } else {
-    let transactions: TransactionInfo | TransactionInfo[]
+    let transactions: TransactionInfo | TransactionInfo[];
     if (program.args[0]?.match(transactionHash)) {
-      transactions = await getTransaction(program.args[0], options)
+      transactions = await getTransaction(program.args[0], options);
     } else {
       try {
-        const txHashes = program.args[0]?.split(",")
-        transactions = await getTransactions(txHashes, options)
+        const txHashes = program.args[0]?.split(",");
+        transactions = await getTransactions(txHashes, options);
       } catch (err) {
         console.error(
           `Must pass a transaction hash or an array of hashes in hexadecimal format with a 0x prefix`
-        )
-        process.exit(1)
+        );
+        process.exit(1);
       }
     }
 
-    const contracts = await getContracts(transactions, options)
+    const contracts = await getContracts(transactions, options);
 
     pumlStream = streamTxPlantUml(transactions, contracts, {
-      ...program
-    })
+      ...program,
+    });
   }
 
-  let filename = program.outputFileName
+  let filename = program.outputFileName;
   if (!filename) {
     filename = program.args[0]?.match(transactionHash)
       ? program.args[0]
-      : "output"
+      : "output";
   }
 
   await generateFile(pumlStream, {
     format: program.outputFormat,
-    filename
-  })
-}
+    filename,
+  });
+};
 
 tx2uml()
   .then(() => {
-    debug("Done!")
+    debug("Done!");
   })
-  .catch(err => {
-    console.error(`Failed to generate UML diagram ${err.stack}`)
-  })
+  .catch((err) => {
+    console.error(`Failed to generate UML diagram ${err.stack}`);
+  });

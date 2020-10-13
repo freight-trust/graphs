@@ -5,21 +5,21 @@ import {
   Param,
   TokenTransfer,
   TransactionDetails,
-  TransactionInfo
-} from "./transaction"
-import { Readable } from "stream"
+  TransactionInfo,
+} from "./transaction";
+import { Readable } from "stream";
 
-const debug = require("debug")("tx2uml")
+const debug = require("debug")("tx2uml");
 
 export interface PumlGenerationOptions {
-  gas?: boolean
-  params?: boolean
-  ether?: boolean
-  network?: string
+  gas?: boolean;
+  params?: boolean;
+  ether?: boolean;
+  network?: string;
 }
 
-const DelegateLifelineColor = "#809ECB"
-const DelegateMessageColor = "#3471CD"
+const DelegateLifelineColor = "#809ECB";
+const DelegateMessageColor = "#3471CD";
 
 export const streamTransferPuml = (
   txHash: string,
@@ -28,17 +28,17 @@ export const streamTransferPuml = (
   options: PumlGenerationOptions = {}
 ) => {
   const pumlStream = new Readable({
-    read() {}
-  })
-  pumlStream.push(`@startuml\ntitle ${txHash}\n`)
-  writeParticipants(pumlStream, contracts)
-  writeTransfers(pumlStream, transfers, options)
+    read() {},
+  });
+  pumlStream.push(`@startuml\ntitle ${txHash}\n`);
+  writeParticipants(pumlStream, contracts);
+  writeTransfers(pumlStream, transfers, options);
 
-  pumlStream.push("\n@endumls")
-  pumlStream.push(null)
+  pumlStream.push("\n@endumls");
+  pumlStream.push(null);
 
-  return pumlStream
-}
+  return pumlStream;
+};
 
 export const streamTxPlantUml = (
   transactions: TransactionInfo | TransactionInfo[],
@@ -46,16 +46,16 @@ export const streamTxPlantUml = (
   options: PumlGenerationOptions = {}
 ): Readable => {
   const pumlStream = new Readable({
-    read() {}
-  })
+    read() {},
+  });
   if (Array.isArray(transactions)) {
-    streamMultiTxsPuml(pumlStream, transactions, contracts, options)
+    streamMultiTxsPuml(pumlStream, transactions, contracts, options);
   } else {
-    streamSingleTxPuml(pumlStream, transactions, contracts, options)
+    streamSingleTxPuml(pumlStream, transactions, contracts, options);
   }
 
-  return pumlStream
-}
+  return pumlStream;
+};
 
 export const streamMultiTxsPuml = (
   pumlStream: Readable,
@@ -63,19 +63,19 @@ export const streamMultiTxsPuml = (
   contracts: Contracts,
   options: PumlGenerationOptions = {}
 ) => {
-  pumlStream.push(`@startuml\n`)
+  pumlStream.push(`@startuml\n`);
   for (const transaction of transactions) {
-    pumlStream.push(`\ngroup ${transaction.details.hash}`)
-    writeParticipants(pumlStream, contracts)
-    writeMessages(pumlStream, transaction.messages, options)
-    pumlStream.push("end")
+    pumlStream.push(`\ngroup ${transaction.details.hash}`);
+    writeParticipants(pumlStream, contracts);
+    writeMessages(pumlStream, transaction.messages, options);
+    pumlStream.push("end");
   }
 
-  pumlStream.push("\n@endumls")
-  pumlStream.push(null)
+  pumlStream.push("\n@endumls");
+  pumlStream.push(null);
 
-  return pumlStream
-}
+  return pumlStream;
+};
 
 export const streamSingleTxPuml = (
   pumlStream: Readable,
@@ -83,51 +83,51 @@ export const streamSingleTxPuml = (
   contracts: Contracts,
   options: PumlGenerationOptions = {}
 ): Readable => {
-  pumlStream.push(`@startuml\ntitle ${transaction.details.hash}\n`)
-  pumlStream.push(genCaption(transaction.details, options))
-  writeParticipants(pumlStream, contracts)
-  writeMessages(pumlStream, transaction.messages, options)
+  pumlStream.push(`@startuml\ntitle ${transaction.details.hash}\n`);
+  pumlStream.push(genCaption(transaction.details, options));
+  writeParticipants(pumlStream, contracts);
+  writeMessages(pumlStream, transaction.messages, options);
 
-  pumlStream.push("\n@endumls")
-  pumlStream.push(null)
+  pumlStream.push("\n@endumls");
+  pumlStream.push(null);
 
-  return pumlStream
-}
+  return pumlStream;
+};
 
 export const writeParticipants = (
   plantUmlStream: Readable,
   contracts: Contracts
 ) => {
-  plantUmlStream.push("\n")
+  plantUmlStream.push("\n");
 
   for (const [address, contract] of Object.entries(contracts)) {
-    let name: string = ""
+    let name: string = "";
     if (contract.tokenName) {
       if (contract.symbol) {
-        name = `<<${contract.tokenName} (${contract.symbol})>>`
+        name = `<<${contract.tokenName} (${contract.symbol})>>`;
       } else {
-        name = `<<${contract.tokenName}>>`
+        name = `<<${contract.tokenName}>>`;
       }
     }
     if (contract.contractName) {
-      name += `<<${contract.contractName}>>`
+      name += `<<${contract.contractName}>>`;
     }
 
     plantUmlStream.push(
       `participant "${shortAddress(address)}" as ${participantId(
         address
       )} ${name}\n`
-    )
+    );
   }
-}
+};
 
 export const participantId = (address: string): string => {
-  return address.substr(2, 4) + address.substr(-4, 4)
-}
+  return address.substr(2, 4) + address.substr(-4, 4);
+};
 
 export const shortAddress = (address: string): string => {
-  return address.substr(0, 6) + ".." + address.substr(-4, 4)
-}
+  return address.substr(0, 6) + ".." + address.substr(-4, 4);
+};
 
 export const writeMessages = (
   plantUmlStream: Readable,
@@ -135,11 +135,11 @@ export const writeMessages = (
   options: PumlGenerationOptions = {}
 ) => {
   if (!messages?.length) {
-    return
+    return;
   }
-  let contractCallStack: Message[] = []
-  let previousMessage: Message | undefined
-  plantUmlStream.push("\n")
+  let contractCallStack: Message[] = [];
+  let previousMessage: Message | undefined;
+  plantUmlStream.push("\n");
   // for each contract message
   for (const message of messages) {
     debug(
@@ -152,7 +152,7 @@ export const writeMessages = (
       }, delegated call ${message.delegatedCall?.id} last ${
         message.delegatedCall?.last
       }`
-    )
+    );
     // return from lifeline if processing has moved to a different contract
     // except when the previous message was a delegatecall
     if (
@@ -161,13 +161,13 @@ export const writeMessages = (
       previousMessage.type !== MessageType.Delegatecall
     ) {
       // reserve() is mutable so need to copy the array wih a spread operator
-      const reservedCallStack = [...contractCallStack].reverse()
+      const reservedCallStack = [...contractCallStack].reverse();
       for (const callStack of reservedCallStack) {
-        plantUmlStream.push(genEndLifeline(callStack))
-        contractCallStack.pop()
+        plantUmlStream.push(genEndLifeline(callStack));
+        contractCallStack.pop();
         // stop returns when the callstack is back to this message's lifeline
         if (message.from === callStack.from) {
-          break
+          break;
         }
       }
     }
@@ -175,7 +175,7 @@ export const writeMessages = (
     // if the previous message was the last delegated call
     if (previousMessage?.delegatedCall?.last) {
       // return from the delegated lifeline
-      plantUmlStream.push("return\n")
+      plantUmlStream.push("return\n");
     }
 
     if (
@@ -191,15 +191,15 @@ export const writeMessages = (
           message,
           options.gas
         )}${genEtherValue(message, options.ether)}\n`
-      )
+      );
 
       if (message.type === MessageType.Delegatecall) {
         plantUmlStream.push(
           `activate ${participantId(message.to)} ${DelegateLifelineColor}\n`
-        )
+        );
       } else {
-        plantUmlStream.push(`activate ${participantId(message.to)}\n`)
-        contractCallStack.push(message)
+        plantUmlStream.push(`activate ${participantId(message.to)}\n`);
+        contractCallStack.push(message);
       }
     } else if (message.type === MessageType.Value) {
       plantUmlStream.push(
@@ -209,130 +209,134 @@ export const writeMessages = (
           message,
           options.gas
         )}\n`
-      )
+      );
       // we want to avoid a return in the next loop so setting previous message from field so no returns are printed
       if (previousMessage) {
-        previousMessage.to = message.from
+        previousMessage.to = message.from;
       }
-      continue
+      continue;
     } else if (message.type === MessageType.Selfdestruct) {
-      plantUmlStream.push(`return selfdestruct\n`)
+      plantUmlStream.push(`return selfdestruct\n`);
       // selfdestruct is the return so pop the previous contract call
-      contractCallStack.pop()
+      contractCallStack.pop();
     }
 
-    previousMessage = message
+    previousMessage = message;
   }
-  contractCallStack.reverse().forEach(callStack => {
-    plantUmlStream.push(genEndLifeline(callStack))
-  })
-}
+  contractCallStack.reverse().forEach((callStack) => {
+    plantUmlStream.push(genEndLifeline(callStack));
+  });
+};
 
 const genEndLifeline = (message: Message): string => {
-  let plantUml = ""
+  let plantUml = "";
   if (message.status) {
-    plantUml += `return\n`
+    plantUml += `return\n`;
   } else {
     // a failed transaction so end the lifeline
-    plantUml += `destroy ${participantId(message.to)}\n`
+    plantUml += `destroy ${participantId(message.to)}\n`;
   }
   if (message.error) {
-    plantUml += `note right of ${participantId(message.to)}: ${message.error}\n`
+    plantUml += `note right of ${participantId(message.to)}: ${
+      message.error
+    }\n`;
   }
-  return plantUml
-}
+  return plantUml;
+};
 
 const genArrow = (message: Message): string => {
   const arrowColor = isNaN(message.delegatedCall?.id)
     ? ""
-    : `[${DelegateMessageColor}]`
+    : `[${DelegateMessageColor}]`;
   if (message.type === MessageType.Call) {
-    return `-${arrowColor}>`
+    return `-${arrowColor}>`;
   }
   if (message.type === MessageType.Value) {
-    return `-${arrowColor}>>`
+    return `-${arrowColor}>>`;
   }
   if (message.type === MessageType.Create) {
-    return `-${arrowColor}>o`
+    return `-${arrowColor}>o`;
   }
   if (message.type === MessageType.Selfdestruct) {
-    return `-${arrowColor}\\`
+    return `-${arrowColor}\\`;
   }
 
-  return `-${arrowColor}>`
-}
+  return `-${arrowColor}>`;
+};
 
 const genFunctionText = (message: Message, params: boolean = false): string => {
   if (!message?.payload) {
-    return ""
+    return "";
   } else if (message.type === MessageType.Create) {
-    return "create"
+    return "create";
   }
-  const payload = message.payload
+  const payload = message.payload;
   if (!payload.funcSelector) {
-    return params ? "fallback()" : "fallback"
+    return params ? "fallback()" : "fallback";
   }
   if (!payload.funcName) {
-    return `${payload.funcSelector}`
+    return `${payload.funcSelector}`;
   }
   return params
     ? `${payload.funcName}(${genParams(payload.inputs)})`
-    : payload.funcName
-}
+    : payload.funcName;
+};
 
 export const genParams = (params: Param[], plantUml = ""): string => {
   if (!params) {
-    return ""
+    return "";
   }
 
   for (const param of params) {
     if (param.name) {
-      plantUml += `${param.name}: `
+      plantUml += `${param.name}: `;
     }
     if (param.type === "address") {
-      plantUml += `${shortAddress(param.value)}, `
+      plantUml += `${shortAddress(param.value)}, `;
     } else if (param.type.slice(0, 5) === "bytes") {
-      plantUml += `${param.type}, `
+      plantUml += `${param.type}, `;
     } else if (param.components) {
       if (Array.isArray(param.components)) {
-        plantUml += `[`
-        plantUml = genParams(param.components as Param[], plantUml)
-        plantUml += `], `
+        plantUml += `[`;
+        plantUml = genParams(param.components as Param[], plantUml);
+        plantUml += `], `;
       } else {
-        debug(`Unsupported components type ${JSON.stringify(param.components)}`)
+        debug(
+          `Unsupported components type ${JSON.stringify(param.components)}`
+        );
       }
     } else {
-      plantUml += `${param.value}, `
+      plantUml += `${param.value}, `;
     }
   }
 
-  return plantUml.slice(0, -2)
-}
+  return plantUml.slice(0, -2);
+};
 
 const genGasUsage = (message: Message, gasUsage: boolean = false): string => {
   if (!gasUsage) {
-    return ""
+    return "";
   }
-  return ` [${message.gasUsed}]`
-}
+  return ` [${message.gasUsed}]`;
+};
 
 const genEtherValue = (
   message: Message,
   etherValue: boolean = false
 ): string => {
   if (!etherValue || message.value.eq(0)) {
-    return ""
+    return "";
   }
-  return ` ${message.value.toString()} ETH`
-}
+  return ` ${message.value.toString()} ETH`;
+};
 
 const genCaption = (
   details: TransactionDetails,
   options: PumlGenerationOptions
 ): string => {
-  return `caption ${options.network || ""} ${details.timestamp.toUTCString()} `
+  return `caption ${options.network || ""} ${details.timestamp.toUTCString()} `;
   // `gas price ${details.gasPrice}, limit ${details.gasLimit}`
-}
+};
 
 export const writeTransfers = (
   plantUmlStream: Readable,
@@ -340,25 +344,25 @@ export const writeTransfers = (
   options: PumlGenerationOptions = {}
 ) => {
   if (!transfers?.length) {
-    return
+    return;
   }
 
-  plantUmlStream.push("\n")
+  plantUmlStream.push("\n");
   for (const transfer of transfers) {
     debug(
       `id ${transfer.id}, from ${shortAddress(
         transfer.from
       )}, to ${shortAddress(transfer.to)}, value ${transfer.value.toString()}`
-    )
+    );
 
     const valueUnit = (transfer as TokenTransfer).symbol
       ? (transfer as TokenTransfer).symbol
-      : "ETH"
+      : "ETH";
 
     plantUmlStream.push(
       `${participantId(transfer.from)} -> ${participantId(
         transfer.to
       )}: ${transfer.value.toString()} ${valueUnit}\n`
-    )
+    );
   }
-}
+};

@@ -1,1 +1,3 @@
 node_modules
+staking/bootstrap.min.js
+*.min.js

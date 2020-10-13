@@ -1,7 +1,7 @@
-import { writeMessages, writeParticipants } from "../plantUmlStreamer"
-import { Contracts, Message, MessageType, Payload } from "../transaction"
-import { Readable } from "stream"
-import BigNumber from "bignumber.js"
+import { writeMessages, writeParticipants } from "../plantUmlStreamer";
+import { Contracts, Message, MessageType, Payload } from "../transaction";
+import { Readable } from "stream";
+import BigNumber from "bignumber.js";
 
 const baseMessage: Message = {
   id: 0,
@@ -14,50 +14,50 @@ const baseMessage: Message = {
   gasLimit: BigInt(2),
   callDepth: 0,
   status: true,
-  error: undefined
-}
+  error: undefined,
+};
 
 const basePayload: Payload = {
   funcName: "someFunc",
   funcSelector: "0a5ea466",
   inputs: [],
-  outputs: []
-}
+  outputs: [],
+};
 
 const testContracts: Contracts = {
   "0x0000324fd7df8b2a969969bcc3663d74f0581111": {
-    address: "0x0000324fd7df8b2a969969bcc3663d74f0581111"
+    address: "0x0000324fd7df8b2a969969bcc3663d74f0581111",
   },
   "0x11116FECD516Ecc3849DAf6845e3EC8680872222": {
     address: "0x11116FECD516Ecc3849DAf6845e3EC8680872222",
-    contractName: "Controller"
+    contractName: "Controller",
   },
   "0x22226FECD516Ecc3849DAf6845e3EC8680873333": {
     address: "0x22226FECD516Ecc3849DAf6845e3EC8680873333",
-    contractName: "Proxy"
+    contractName: "Proxy",
   },
   "0x333365fe5446d880f8ec261d9224166909124444": {
     address: "0x333365fe5446d880f8ec261d9224166909124444",
-    contractName: "DeFiApp"
+    contractName: "DeFiApp",
   },
   "0x44447296C1DE2Ed53348A3B23AD56797b75a5555": {
     address: "0x4fc67296C1DE2Ed53348A3B23AD56797b75aAA8C",
-    contractName: "Hacker"
+    contractName: "Hacker",
   },
   "0x555538e6266DE92C1E449cBd89C5c202583b6666": {
     address: "0xDc3138e6266DE92C1E449cBd89C5c202583b62eD",
-    contractName: "Oracle"
-  }
-}
+    contractName: "Oracle",
+  },
+};
 
 const stream = new Readable({
-  read() {}
-})
+  read() {},
+});
 
 describe("Stream Plant UML", () => {
   test("List participants", () => {
-    writeParticipants(stream, testContracts)
-    const plantUmlBuf = stream.read()
+    writeParticipants(stream, testContracts);
+    const plantUmlBuf = stream.read();
     expect(plantUmlBuf.toString()).toEqual(
       '\nparticipant "0x0000..1111" as 00001111 \n' +
         'participant "0x1111..2222" as 11112222 <<Controller>>\n' +
@@ -65,8 +65,8 @@ describe("Stream Plant UML", () => {
         'participant "0x3333..4444" as 33334444 <<DeFiApp>>\n' +
         'participant "0x4444..5555" as 44445555 <<Hacker>>\n' +
         'participant "0x5555..6666" as 55556666 <<Oracle>>\n'
-    )
-  })
+    );
+  });
 
   describe("Messages", () => {
     test("0->1", () => {
@@ -77,16 +77,16 @@ describe("Stream Plant UML", () => {
           to: "0x11116FECD516Ecc3849DAf6845e3EC8680872222",
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "first",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" + "activate 11112222\n" + "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2", () => {
       const messages: Message[] = [
         {
@@ -96,8 +96,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -107,12 +107,12 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "second",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -120,8 +120,8 @@ describe("Stream Plant UML", () => {
           "activate 22223333\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1 0->1", () => {
       const messages: Message[] = [
         {
@@ -131,8 +131,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -142,12 +142,12 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "second",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -155,8 +155,8 @@ describe("Stream Plant UML", () => {
           "00001111 -> 11112222: second\n" +
           "activate 11112222\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2 0->2", () => {
       const messages: Message[] = [
         {
@@ -166,8 +166,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -177,8 +177,8 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
+            funcName: "second",
+          },
         },
         {
           ...baseMessage,
@@ -188,12 +188,12 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "third"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "third",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -204,8 +204,8 @@ describe("Stream Plant UML", () => {
           "00001111 -> 22223333: third\n" +
           "activate 22223333\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2 1->3", () => {
       const messages: Message[] = [
         {
@@ -215,8 +215,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -226,8 +226,8 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
+            funcName: "second",
+          },
         },
         {
           ...baseMessage,
@@ -237,12 +237,12 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "third"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "third",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -253,8 +253,8 @@ describe("Stream Plant UML", () => {
           "activate 33334444\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2 1->0", () => {
       const messages: Message[] = [
         {
@@ -264,8 +264,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -275,8 +275,8 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
+            funcName: "second",
+          },
         },
         {
           ...baseMessage,
@@ -286,12 +286,12 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "third"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "third",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -302,8 +302,8 @@ describe("Stream Plant UML", () => {
           "activate 00001111\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2->0->1", () => {
       const messages: Message[] = [
         {
@@ -313,8 +313,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -324,8 +324,8 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
+            funcName: "second",
+          },
         },
         {
           ...baseMessage,
@@ -335,8 +335,8 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "third"
-          }
+            funcName: "third",
+          },
         },
         {
           ...baseMessage,
@@ -346,12 +346,12 @@ describe("Stream Plant UML", () => {
           id: 3,
           payload: {
             ...basePayload,
-            funcName: "forth"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "forth",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -365,8 +365,8 @@ describe("Stream Plant UML", () => {
           "return\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->3->2", () => {
       const messages: Message[] = [
         {
@@ -376,8 +376,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first"
-          }
+            funcName: "first",
+          },
         },
         {
           ...baseMessage,
@@ -386,8 +386,8 @@ describe("Stream Plant UML", () => {
           callDepth: 1,
           payload: {
             ...basePayload,
-            funcName: "second"
-          }
+            funcName: "second",
+          },
         },
         {
           ...baseMessage,
@@ -396,12 +396,12 @@ describe("Stream Plant UML", () => {
           callDepth: 3,
           payload: {
             ...basePayload,
-            funcName: "third"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "third",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first\n" +
           "activate 11112222\n" +
@@ -412,8 +412,8 @@ describe("Stream Plant UML", () => {
           "return\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->>0 1->2", () => {
       const messages: Message[] = [
         {
@@ -423,8 +423,8 @@ describe("Stream Plant UML", () => {
           callDepth: 0,
           payload: {
             ...basePayload,
-            funcName: "first call"
-          }
+            funcName: "first call",
+          },
         },
         {
           ...baseMessage,
@@ -433,10 +433,10 @@ describe("Stream Plant UML", () => {
           callDepth: 1,
           id: 1,
           payload: {
-            ...basePayload
+            ...basePayload,
           },
           type: MessageType.Value,
-          value: new BigNumber(1.1)
+          value: new BigNumber(1.1),
         },
         {
           ...baseMessage,
@@ -446,12 +446,12 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "third call"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "third call",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first call\n" +
           "activate 11112222\n" +
@@ -460,8 +460,8 @@ describe("Stream Plant UML", () => {
           "activate 22223333\n" +
           "return\n" +
           "return\n"
-      )
-    })
+      );
+    });
     test("0->1->2-D>3 2->4->5 2->4 2->4 1->2->4", () => {
       const messages: Message[] = [
         {
@@ -470,8 +470,8 @@ describe("Stream Plant UML", () => {
           to: "0x11116FECD516Ecc3849DAf6845e3EC8680872222",
           payload: {
             ...basePayload,
-            funcName: "first call"
-          }
+            funcName: "first call",
+          },
         },
         {
           ...baseMessage,
@@ -480,8 +480,8 @@ describe("Stream Plant UML", () => {
           id: 1,
           payload: {
             ...basePayload,
-            funcName: "second call"
-          }
+            funcName: "second call",
+          },
         },
         {
           ...baseMessage,
@@ -490,9 +490,9 @@ describe("Stream Plant UML", () => {
           id: 2,
           payload: {
             ...basePayload,
-            funcName: "delegate call"
+            funcName: "delegate call",
           },
-          type: MessageType.Delegatecall
+          type: MessageType.Delegatecall,
         },
         {
           ...baseMessage,
@@ -502,12 +502,12 @@ describe("Stream Plant UML", () => {
           parentId: 2,
           payload: {
             ...basePayload,
-            funcName: "1st delegated call from 0x2222..3333"
+            funcName: "1st delegated call from 0x2222..3333",
           },
           delegatedCall: {
             id: 0,
-            last: false
-          }
+            last: false,
+          },
         },
         {
           ...baseMessage,
@@ -516,8 +516,8 @@ describe("Stream Plant UML", () => {
           id: 4,
           payload: {
             ...basePayload,
-            funcName: "not a delegate call"
-          }
+            funcName: "not a delegate call",
+          },
         },
         {
           ...baseMessage,
@@ -527,12 +527,12 @@ describe("Stream Plant UML", () => {
           parentId: 2,
           payload: {
             ...basePayload,
-            funcName: "2nd delegated call from 0x2222..3333"
+            funcName: "2nd delegated call from 0x2222..3333",
           },
           delegatedCall: {
             id: 1,
-            last: true
-          }
+            last: true,
+          },
         },
         {
           ...baseMessage,
@@ -541,8 +541,8 @@ describe("Stream Plant UML", () => {
           id: 6,
           payload: {
             ...basePayload,
-            funcName: "not a delegate call"
-          }
+            funcName: "not a delegate call",
+          },
         },
         {
           ...baseMessage,
@@ -551,8 +551,8 @@ describe("Stream Plant UML", () => {
           id: 7,
           payload: {
             ...basePayload,
-            funcName: "not a delegate call"
-          }
+            funcName: "not a delegate call",
+          },
         },
         {
           ...baseMessage,
@@ -561,12 +561,12 @@ describe("Stream Plant UML", () => {
           id: 8,
           payload: {
             ...basePayload,
-            funcName: "not a delegate call"
-          }
-        }
-      ]
-      writeMessages(stream, messages)
-      const plantUmlBuf = stream.read()
+            funcName: "not a delegate call",
+          },
+        },
+      ];
+      writeMessages(stream, messages);
+      const plantUmlBuf = stream.read();
       expect(plantUmlBuf.toString()).toEqual(
         "\n00001111 -> 11112222: first call\n" +
           "activate 11112222\n" +
@@ -595,7 +595,7 @@ describe("Stream Plant UML", () => {
           "return\n" +
           "return\n" +
           "return\n"
-      )
-    })
-  })
-})
+      );
+    });
+  });
+});
