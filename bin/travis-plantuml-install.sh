@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-wget "http://downloads.sourceforge.net/project/plantuml/plantuml.jar?r=&ts=1424308684&use_mirror=jaist" -O plantuml.jar
+wget "https://github.com/freight-trust/bintray/releases/download/plantuml/plantuml.jar" -O plantuml.jar
 sudo mkdir -p /opt/plantuml
 sudo cp plantuml.jar /opt/plantuml
 echo '#!/usr/bin/env sh' > plantuml.sh
